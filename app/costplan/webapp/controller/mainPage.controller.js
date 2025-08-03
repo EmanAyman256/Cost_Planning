@@ -1119,32 +1119,542 @@ sap.ui.define([
         },
 
 
+        // onOpenSimulation: async function () {
+        //     const oView = this.getView();
+        //     const oViewModel = oView.getModel("viewModel");
+        //     const sCategory = oViewModel.getProperty("/selectedCategory");
+        //     const oSimModel = this.getView().getModel("simulationModel");
+        //     const sSalesDoc = oViewModel.getProperty("/quotationNumber");
+        //     const sItemNum = oViewModel.getProperty("/itemNumber");
+        //     // Reset values
+        //     oViewModel.setProperty("/simulationData", []);
+        //     oViewModel.setProperty("/indirectCostData", []);
+        //     oViewModel.setProperty("/materialData", []);
+        //     oViewModel.setProperty("/cablesData", []);
+        //     oViewModel.setProperty("/selectedMaterialDesc", "");
+        //     oViewModel.setProperty("/totalAmount", "0.00");
+
+        //     if (this._oSimulationDialog) {
+        //         this._oSimulationDialog.destroy();
+        //         this._oSimulationDialog = null;
+        //     }
+
+        //     // Destroy materialTable if it already exists
+        //     const oOldMaterialTable = sap.ui.getCore().byId(this.createId("materialTable"));
+        //     if (oOldMaterialTable) {
+        //         oOldMaterialTable.destroy();
+        //     }
+
+        //     // E & D Table
+        //     const oEDTable = new sap.m.Table({
+        //         visible: sCategory === "EAndD",
+        //         columns: [
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Design and Engineering" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Salary" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Months" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "No. Of Persons" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Amount (SAR)" }) })
+        //         ],
+        //         items: {
+        //             path: "viewModel>/simulationData",
+        //             template: new sap.m.ColumnListItem({
+        //                 cells: [
+        //                     new sap.m.Input({ value: "{viewModel>description}", change: this.onSimulationInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Salary}", type: "Number", change: this.onSimulationInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Months}", type: "Number", change: this.onSimulationInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>NoOfPersons}", type: "Number", change: this.onSimulationInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Amount}", type: "Number", change: this.onAmountDirectChange.bind(this) })
+        //                 ]
+        //             })
+        //         }
+        //     });
+
+        //     // Indirect Cost Table
+        //     const oIndirectTable = new sap.m.Table({
+        //         visible: sCategory === "IndirectCost",
+        //         columns: [
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Description" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Unit" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Qty" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Cost" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Labour" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Total (SAR)" }) })
+        //         ],
+        //         items: {
+        //             path: "viewModel>/indirectCostData",
+        //             template: new sap.m.ColumnListItem({
+        //                 cells: [
+        //                     new sap.m.Input({ value: "{viewModel>Description}", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Unit}", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Qty}", type: "Number", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Cost}", type: "Number", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Labour}", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ editable: false, value: "{viewModel>Total}", type: "Number", change: this.onTotalDirectChange.bind(this) })
+        //                 ]
+        //             })
+        //         }
+        //     });
+
+        //     // Material Header
+        //     const oMaterialHeader = new sap.m.VBox({
+        //         width: "100%",
+        //         alignItems: "Center",
+        //         items: [
+        //             new sap.m.Label({ text: "Material Description (Required):" }).addStyleClass("sapUiSmallMarginTop sapUiSmallMarginBegin sapUiSizeCompact"),
+        //             new sap.m.HBox({
+        //                 alignItems: "Center",
+        //                 items: [
+        //                     new sap.m.Button({
+        //                         text: "Confirm Vendor Selection",
+        //                         icon: "sap-icon://accept",
+        //                         press: this.onConfirmVendorSelection.bind(this)
+        //                     }).addStyleClass("sapUiResponsiveMargin sapUiSizeCompact")
+        //                 ]
+        //             }).addStyleClass("sapUiSmallMarginBegin sapUiSizeCompact")
+        //         ]
+        //     });
+
+        //     // Material Table
+        //     const oMaterialTable = new sap.m.Table({
+        //         id: this.createId("materialTable"),
+        //         keyboardMode: "Edit",
+        //         visible: sCategory === "Material",
+        //         inset: false,
+        //         width: "auto",
+        //         columns: [
+        //             "Material", "Vendor Details", "Quotation Date", "Quotation Price", "Payment Terms",
+        //             "Freight & Clearance Charges(%)", "Freight & Clearance Charges", "Transportation Charges", "SABER", "Total Sub-Charges", "Total Price"
+        //         ].map(text => new sap.m.Column({
+        //             header: new sap.m.Text({ text }),
+        //             demandPopin: true,
+        //             minScreenWidth: "Tablet"
+        //         })),
+        //         items: {
+        //             path: "viewModel>/materialData",
+        //             factory: this._createMaterialRow.bind(this)
+        //         }
+        //     }).addStyleClass("sapUiResponsiveMargin sapUiSizeCompact");
+
+        //     // Cables Table
+        //     const oCablesTable = new sap.m.Table({
+        //         visible: sCategory === "Cables",
+        //         columns: [
+        //             "Description", "Circuit", "Runs", "No of ph", "Approximate Meter", "Total", "Unit Price", "Total Price (SAR)"
+        //         ].map(text => new sap.m.Column({ header: new sap.m.Text({ text }) })),
+        //         items: {
+        //             path: "viewModel>/cablesData",
+        //             template: new sap.m.ColumnListItem({
+        //                 cells: [
+        //                     new sap.m.Input({ value: "{viewModel>Description}", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Circuit}", type: "Number", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Runs}", type: "Number", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>No_of_ph}", type: "Number", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Approximate_Meter}", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ editable: false, value: "{viewModel>Total}", type: "Number", change: this.onCablesTotalPriceChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Unit_Price}", type: "Number", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ editable: false, value: "{viewModel>Total_Price}", type: "Number", change: this.onCablesTotalPriceChange.bind(this) })
+        //                 ]
+        //             })
+        //         }
+        //     });
+
+        //     // Dialog Setup
+        //     this._oSimulationDialog = new sap.m.Dialog({
+        //         title: "Simulation Table",
+        //         contentWidth: "auto",
+        //         contentHeight: "80%",
+        //         content: new sap.m.VBox({
+        //             items: [
+        //                 sCategory === "Material" ? oMaterialHeader : null,
+        //                 sCategory === "EAndD" ? oEDTable : null,
+        //                 sCategory === "IndirectCost" ? oIndirectTable : null,
+        //                 sCategory === "Material" ? oMaterialTable : null,
+        //                 sCategory === "Cables" ? oCablesTable : null,
+        //                 new sap.m.Text({
+        //                     visible: !["EAndD", "IndirectCost", "Material", "Cables"].includes(sCategory),
+        //                     text: "This category is not available now and will be available shortly."
+        //                 })
+        //             ].filter(Boolean)
+        //         }),
+        //         buttons: [
+        //             new sap.m.Button({
+        //                 text: "Save",
+        //                 press: this.onSaveSimulation.bind(this)
+        //             }),
+        //             new sap.m.Button({
+        //                 text: "Add New Line",
+        //                 press: this.onAddNewLine.bind(this),
+        //                 visible: sCategory === "EAndD" || sCategory === "IndirectCost" || sCategory === "Material" || sCategory === "Cables"
+        //             }),
+        //             new sap.m.Button({
+        //                 text: "Close",
+        //                 press: () => this._oSimulationDialog.close()
+        //             })
+        //         ]
+        //     });
+
+        //     this.getView().addDependent(this._oSimulationDialog);
+
+        //     // Default row for each category
+        //     if (sCategory === "EAndD") {
+        //         oViewModel.setProperty("/simulationData", [{ description: "", Salary: "", Months: "", NoOfPersons: "", Amount: "" ,}]);
+        //     } else if (sCategory === "IndirectCost") {
+        //         oViewModel.setProperty("/indirectCostData", [{ Description: "", Unit: "", Qty: "", Cost: "", Labour: "", Total: "" }]);
+        //     } else if (sCategory === "Material") {
+        //         oViewModel.setProperty("/materialData", [{
+        //             selectedMaterialDesc: "", Vendor_Details: "", Quotation_Date: "", Quotation_Price: "",
+        //             Payment_Terms: "", Freight_Clearance_Charges_Percentage: "", Freight_Clearance_Charges: "", Transportation_Charges: "", SABER: "", Total_Sub_Charges: "", Total_Price: ""
+        //         }]);
+        //     } else if (sCategory === "Cables") {
+        //         oViewModel.setProperty("/cablesData", [{
+        //             Description: "", Circuit: "", Runs: "", No_of_ph: "", Approximate_Meter: "", Total: "", Unit_Price: "", Total_Price: ""
+        //         }]);
+        //     }
+        //     if (sCategory === "EAndD") {
+        //         const oListBinding = oSimModel.bindList("/EngineeringDesignEntry", null, null, [
+        //             new sap.ui.model.Filter("Salesdocument", "EQ", sSalesDoc),
+        //             new sap.ui.model.Filter("ItemNumber", "EQ", sItemNum)
+        //         ]);
+
+        //         try {
+        //             const oContextList = await oListBinding.requestContexts();
+        //             const aResults = oContextList.map(ctx => ctx.getObject());
+
+        //             oViewModel.setProperty("/simulationData", aResults);
+        //         } catch (e) {
+        //             console.error("Failed to fetch saved EAndD data:", e);
+        //             sap.m.MessageBox.error("Simulation saved, but could not load saved data.");
+        //         }
+        //     }
+        //     else if(sCategory==="IndirectCost"){
+        //         const oListBinding = oSimModel.bindList("/IndirectCostEntry", null, null, [
+        //             new sap.ui.model.Filter("Salesdocument", "EQ", sSalesDoc),
+        //             new sap.ui.model.Filter("ItemNumber", "EQ", sItemNum)
+        //         ]);
+
+        //         try {
+        //             const oContextList = await oListBinding.requestContexts();
+        //             const aResults = oContextList.map(ctx => ctx.getObject());
+
+        //             oViewModel.setProperty("/indirectCostData", aResults);
+        //         } catch (e) {
+        //             console.error("Failed to fetch saved EAndD data:", e);
+        //             sap.m.MessageBox.error("Simulation saved, but could not load saved data.");
+        //         }
+        //     }
+        //     else if(sCategory==="Material"){
+        //         const oListBinding = oSimModel.bindList("/MaterialEntry", null, null, [
+        //             new sap.ui.model.Filter("Salesdocument", "EQ", sSalesDoc),
+        //             new sap.ui.model.Filter("ItemNumber", "EQ", sItemNum)
+        //         ]);
+
+        //         try {
+        //             const oContextList = await oListBinding.requestContexts();
+        //             const aResults = oContextList.map(ctx => ctx.getObject());
+
+        //             oViewModel.setProperty("/materialData", aResults);
+        //         } catch (e) {
+        //             console.error("Failed to fetch saved EAndD data:", e);
+        //             sap.m.MessageBox.error("Simulation saved, but could not load saved data.");
+        //         }
+        //     }
+        //     else if(sCategory==="Cables"){
+        //         const oListBinding = oSimModel.bindList("/CablesEntry", null, null, [
+        //             new sap.ui.model.Filter("Salesdocument", "EQ", sSalesDoc),
+        //             new sap.ui.model.Filter("ItemNumber", "EQ", sItemNum)
+        //         ]);
+
+        //         try {
+        //             const oContextList = await oListBinding.requestContexts();
+        //             const aResults = oContextList.map(ctx => ctx.getObject());
+
+        //             oViewModel.setProperty("/cablesData", aResults);
+        //         } catch (e) {
+        //             console.error("Failed to fetch saved EAndD data:", e);
+        //             sap.m.MessageBox.error("Simulation saved, but could not load saved data.");
+        //         }
+        //     }
+
+        //     this._oSimulationDialog.open();
+        // },
+        // onOpenSimulation: async function () {
+        //     const oView = this.getView();
+        //     const oViewModel = oView.getModel("viewModel");
+        //     const oSimModel = oView.getModel("simulationModel");
+        //     const sSalesDoc = oViewModel.getProperty("/quotationNumber");
+        //     const sItemNum = oViewModel.getProperty("/itemNumber");
+        //     const sCategory = oViewModel.getProperty("/selectedCategory");
+        
+        //     // Validate required parameters
+        //     if (!sSalesDoc || !sItemNum) {
+        //         console.error(`Invalid parameters - Salesdocument: ${sSalesDoc}, ItemNumber: ${sItemNum}`);
+        //         sap.m.MessageBox.error("Cannot load data: Missing quotation number or item number.");
+        //         return;
+        //     }
+        
+        //     // Initialize view model properties
+        //     oViewModel.setProperty("/simulationData", []);
+        //     oViewModel.setProperty("/indirectCostData", []);
+        //     oViewModel.setProperty("/materialData", []);
+        //     oViewModel.setProperty("/cablesData", []);
+        //     oViewModel.setProperty("/selectedMaterialDesc", "");
+        //     oViewModel.setProperty("/totalAmount", "0.00");
+        
+        //     if (this._oSimulationDialog) {
+        //         this._oSimulationDialog.destroy();
+        //         this._oSimulationDialog = null;
+        //     }
+        
+        //     // Destroy materialTable if it already exists
+        //     const oOldMaterialTable = sap.ui.getCore().byId(this.createId("materialTable"));
+        //     if (oOldMaterialTable) {
+        //         oOldMaterialTable.destroy();
+        //     }
+        
+        //     // E & D Table
+        //     const oEDTable = new sap.m.Table({
+        //         visible: sCategory === "EAndD",
+        //         columns: [
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Design and Engineering" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Salary" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Months" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "No. Of Persons" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Amount (SAR)" }) })
+        //         ],
+        //         items: {
+        //             path: "viewModel>/simulationData",
+        //             template: new sap.m.ColumnListItem({
+        //                 cells: [
+        //                     new sap.m.Input({ value: "{viewModel>description}", change: this.onSimulationInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Salary}", type: "Number", change: this.onSimulationInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Months}", type: "Number", change: this.onSimulationInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>NoOfPersons}", type: "Number", change: this.onSimulationInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Amount}", type: "Number", change: this.onAmountDirectChange.bind(this) })
+        //                 ]
+        //             })
+        //         }
+        //     });
+        
+        //     // Indirect Cost Table
+        //     const oIndirectTable = new sap.m.Table({
+        //         visible: sCategory === "IndirectCost",
+        //         columns: [
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Description" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Unit" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Qty" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Cost" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Labour" }) }),
+        //             new sap.m.Column({ header: new sap.m.Text({ text: "Total (SAR)" }) })
+        //         ],
+        //         items: {
+        //             path: "viewModel>/indirectCostData",
+        //             template: new sap.m.ColumnListItem({
+        //                 cells: [
+        //                     new sap.m.Input({ value: "{viewModel>Description}", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Unit}", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Qty}", type: "Number", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Cost}", type: "Number", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Labour}", change: this.onIndirectCostInputChange.bind(this) }),
+        //                     new sap.m.Input({ editable: false, value: "{viewModel>Total}", type: "Number", change: this.onTotalDirectChange.bind(this) })
+        //                 ]
+        //             })
+        //         }
+        //     });
+        
+        //     // Material Header
+        //     const oMaterialHeader = new sap.m.VBox({
+        //         width: "100%",
+        //         alignItems: "Center",
+        //         items: [
+        //             new sap.m.Label({ text: "Material Description (Required):" }).addStyleClass("sapUiSmallMarginTop sapUiSmallMarginBegin sapUiSizeCompact"),
+        //             new sap.m.HBox({
+        //                 alignItems: "Center",
+        //                 items: [
+        //                     new sap.m.Button({
+        //                         text: "Confirm Vendor Selection",
+        //                         icon: "sap-icon://accept",
+        //                         press: this.onConfirmVendorSelection.bind(this)
+        //                     }).addStyleClass("sapUiResponsiveMargin sapUiSizeCompact")
+        //                 ]
+        //             }).addStyleClass("sapUiSmallMarginBegin sapUiSizeCompact")
+        //         ]
+        //     });
+        
+        //     // Material Table
+        //     const oMaterialTable = new sap.m.Table({
+        //         id: this.createId("materialTable"),
+        //         keyboardMode: "Edit",
+        //         visible: sCategory === "Material",
+        //         inset: false,
+        //         width: "auto",
+        //         columns: [
+        //             "Material", "Vendor Details", "Quotation Date", "Quotation Price", "Payment Terms",
+        //             "Freight & Clearance Charges(%)", "Freight & Clearance Charges", "Transportation Charges", "SABER", "Total Sub-Charges", "Total Price"
+        //         ].map(text => new sap.m.Column({
+        //             header: new sap.m.Text({ text }),
+        //             demandPopin: true,
+        //             minScreenWidth: "Tablet"
+        //         })),
+        //         items: {
+        //             path: "viewModel>/materialData",
+        //             factory: this._createMaterialRow.bind(this)
+        //         }
+        //     }).addStyleClass("sapUiResponsiveMargin sapUiSizeCompact");
+        
+        //     // Cables Table
+        //     const oCablesTable = new sap.m.Table({
+        //         visible: sCategory === "Cables",
+        //         columns: [
+        //             "Description", "Circuit", "Runs", "No of ph", "Approximate Meter", "Total", "Unit Price", "Total Price (SAR)"
+        //         ].map(text => new sap.m.Column({ header: new sap.m.Text({ text }) })),
+        //         items: {
+        //             path: "viewModel>/cablesData",
+        //             template: new sap.m.ColumnListItem({
+        //                 cells: [
+        //                     new sap.m.Input({ value: "{viewModel>Description}", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Circuit}", type: "Number", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Runs}", type: "Number", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>No_of_ph}", type: "Number", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Approximate_Meter}", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ editable: false, value: "{viewModel>Total}", type: "Number", change: this.onCablesTotalPriceChange.bind(this) }),
+        //                     new sap.m.Input({ value: "{viewModel>Unit_Price}", type: "Number", change: this.onCablesInputChange.bind(this) }),
+        //                     new sap.m.Input({ editable: false, value: "{viewModel>Total_Price}", type: "Number", change: this.onCablesTotalPriceChange.bind(this) })
+        //                 ]
+        //             })
+        //         }
+        //     });
+        
+        //     // Dialog Setup
+        //     this._oSimulationDialog = new sap.m.Dialog({
+        //         title: "Simulation Table",
+        //         contentWidth: "auto",
+        //         contentHeight: "80%",
+        //         content: new sap.m.VBox({
+        //             items: [
+        //                 sCategory === "Material" ? oMaterialHeader : null,
+        //                 sCategory === "EAndD" ? oEDTable : null,
+        //                 sCategory === "IndirectCost" ? oIndirectTable : null,
+        //                 sCategory === "Material" ? oMaterialTable : null,
+        //                 sCategory === "Cables" ? oCablesTable : null,
+        //                 new sap.m.Text({
+        //                     visible: !["EAndD", "IndirectCost", "Material", "Cables"].includes(sCategory),
+        //                     text: "This category is not available now and will be available shortly."
+        //                 })
+        //             ].filter(Boolean)
+        //         }),
+        //         buttons: [
+        //             new sap.m.Button({
+        //                 text: "Save",
+        //                 press: this.onSaveSimulation.bind(this)
+        //             }),
+        //             new sap.m.Button({
+        //                 text: "Add New Line",
+        //                 press: this.onAddNewLine.bind(this),
+        //                 visible: sCategory === "EAndD" || sCategory === "IndirectCost" || sCategory === "Material" || sCategory === "Cables"
+        //             }),
+        //             new sap.m.Button({
+        //                 text: "Close",
+        //                 press: () => this._oSimulationDialog.close()
+        //             })
+        //         ]
+        //     });
+        
+        //     this.getView().addDependent(this._oSimulationDialog);
+        
+        //     // Helper function to fetch data for a given entity and set it to the correct view model path
+        //     const fetchData = async (entityPath, viewModelPath, defaultRow) => {
+        //         console.log(`Fetching data for ${sCategory} (${entityPath}) with Salesdocument: ${sSalesDoc}, ItemNumber: ${sItemNum}`);
+        //         const oListBinding = oSimModel.bindList(entityPath, null, null, [
+        //             new sap.ui.model.Filter("Salesdocument", "EQ", sSalesDoc),
+        //             new sap.ui.model.Filter("ItemNumber", "EQ", sItemNum)
+        //         ]);
+        //         try {
+        //             const oContextList = await oListBinding.requestContexts();
+        //             const aResults = oContextList.map(ctx => {
+        //                 const obj = ctx.getObject();
+        //                 console.log(`Fetched row for ${entityPath}:`, obj);
+        //                 return { ...obj, __isNew: false };
+        //             });
+        //             oViewModel.setProperty(viewModelPath, aResults.length ? aResults : [defaultRow]);
+        //             console.log(`Set ${viewModelPath} for ${sCategory}:`, oViewModel.getProperty(viewModelPath));
+        //             oViewModel.refresh(true); // Ensure UI updates
+        //         } catch (e) {
+        //             console.error(`Failed to fetch saved data for ${sCategory} (${entityPath}):`, e);
+        //             sap.m.MessageBox.error(`Could not load saved data for ${sCategory}: ${e.message}`);
+        //             oViewModel.setProperty(viewModelPath, [defaultRow]);
+        //             oViewModel.refresh(true);
+        //         }
+        //     };
+        
+        //     // Fetch data or set default row for each category
+        //     if (sCategory === "EAndD") {
+        //         await fetchData("/EngineeringDesignEntry", "/simulationData", {
+        //             description: "", Salary: "", Months: "", NoOfPersons: "", Amount: "", __isNew: true
+        //         });
+        //     } else if (sCategory === "IndirectCost") {
+        //         await fetchData("/IndirectCostEntry", "/indirectCostData", {
+        //             Description: "", Unit: "", Qty: "", Cost: "", Labour: "", Total: "", __isNew: true
+        //         });
+        //     } else if (sCategory === "Material") {
+        //         await fetchData("/MaterialEntry", "/materialData", {
+        //             Description: "", Vendor_Details: "", Quotation_Date: "", Quotation_Price: "",
+        //             Payment_Terms: "", Freight_Clearance_Charges_Percentage: "", Freight_Clearance_Charges: "",
+        //             Transportation_Charges: "", SABER: "", Total_Sub_Charges: "", Total_Price: "", __isNew: true
+        //         });
+        //     } else if (sCategory === "Cables") {
+        //         await fetchData("/CablesEntry", "/cablesData", {
+        //             Description: "", Circuit: "", Runs: "", No_of_ph: "", Approximate_Meter: "",
+        //             Total: "", Unit_Price: "", Total_Price: "", __isNew: true
+        //         });
+        //     } else {
+        //         console.warn(`Unsupported category: ${sCategory}`);
+        //         sap.m.MessageBox.warning("Category not supported.");
+        //         oViewModel.setProperty("/simulationData", []);
+        //     }
+        
+        //     this._oSimulationDialog.open();
+        // },
+       
+       
+       
+       
+       
+       //Retrieve the SAVED ITEMS
+       
         onOpenSimulation: async function () {
             const oView = this.getView();
             const oViewModel = oView.getModel("viewModel");
-            const sCategory = oViewModel.getProperty("/selectedCategory");
-            const oSimModel = this.getView().getModel("simulationModel");
+            const oSimModel = oView.getModel("simulationModel");
             const sSalesDoc = oViewModel.getProperty("/quotationNumber");
             const sItemNum = oViewModel.getProperty("/itemNumber");
-            // Reset values
+            const sCategory = oViewModel.getProperty("/selectedCategory");
+        
+            // Validate required parameters
+            if (!sSalesDoc || !sItemNum || !sCategory) {
+                console.error(`Invalid parameters - Salesdocument: ${sSalesDoc}, ItemNumber: ${sItemNum}, Category: ${sCategory}`);
+                sap.m.MessageBox.error("Cannot load data: Missing quotation number, item number, or category.");
+                return;
+            }
+        
+            // Initialize view model properties
             oViewModel.setProperty("/simulationData", []);
             oViewModel.setProperty("/indirectCostData", []);
             oViewModel.setProperty("/materialData", []);
             oViewModel.setProperty("/cablesData", []);
             oViewModel.setProperty("/selectedMaterialDesc", "");
             oViewModel.setProperty("/totalAmount", "0.00");
-
+        
             if (this._oSimulationDialog) {
                 this._oSimulationDialog.destroy();
                 this._oSimulationDialog = null;
             }
-
+        
             // Destroy materialTable if it already exists
             const oOldMaterialTable = sap.ui.getCore().byId(this.createId("materialTable"));
             if (oOldMaterialTable) {
                 oOldMaterialTable.destroy();
             }
-
+        
             // E & D Table
             const oEDTable = new sap.m.Table({
                 visible: sCategory === "EAndD",
@@ -1168,7 +1678,7 @@ sap.ui.define([
                     })
                 }
             });
-
+        
             // Indirect Cost Table
             const oIndirectTable = new sap.m.Table({
                 visible: sCategory === "IndirectCost",
@@ -1194,7 +1704,7 @@ sap.ui.define([
                     })
                 }
             });
-
+        
             // Material Header
             const oMaterialHeader = new sap.m.VBox({
                 width: "100%",
@@ -1213,7 +1723,7 @@ sap.ui.define([
                     }).addStyleClass("sapUiSmallMarginBegin sapUiSizeCompact")
                 ]
             });
-
+        
             // Material Table
             const oMaterialTable = new sap.m.Table({
                 id: this.createId("materialTable"),
@@ -1234,7 +1744,7 @@ sap.ui.define([
                     factory: this._createMaterialRow.bind(this)
                 }
             }).addStyleClass("sapUiResponsiveMargin sapUiSizeCompact");
-
+        
             // Cables Table
             const oCablesTable = new sap.m.Table({
                 visible: sCategory === "Cables",
@@ -1257,7 +1767,7 @@ sap.ui.define([
                     })
                 }
             });
-
+        
             // Dialog Setup
             this._oSimulationDialog = new sap.m.Dialog({
                 title: "Simulation Table",
@@ -1292,44 +1802,103 @@ sap.ui.define([
                     })
                 ]
             });
-
+        
             this.getView().addDependent(this._oSimulationDialog);
-
-            // Default row for each category
-            if (sCategory === "EAndD") {
-                oViewModel.setProperty("/simulationData", [{ description: "", Salary: "", Months: "", NoOfPersons: "", Amount: "" }]);
-            } else if (sCategory === "IndirectCost") {
-                oViewModel.setProperty("/indirectCostData", [{ Description: "", Unit: "", Qty: "", Cost: "", Labour: "", Total: "" }]);
-            } else if (sCategory === "Material") {
-                oViewModel.setProperty("/materialData", [{
-                    selectedMaterialDesc: "", Vendor_Details: "", Quotation_Date: "", Quotation_Price: "",
-                    Payment_Terms: "", Freight_Clearance_Charges_Percentage: "", Freight_Clearance_Charges: "", Transportation_Charges: "", SABER: "", Total_Sub_Charges: "", Total_Price: ""
-                }]);
-            } else if (sCategory === "Cables") {
-                oViewModel.setProperty("/cablesData", [{
-                    Description: "", Circuit: "", Runs: "", No_of_ph: "", Approximate_Meter: "", Total: "", Unit_Price: "", Total_Price: ""
-                }]);
-            }
-            if (sCategory === "EAndD") {
-                const oListBinding = oSimModel.bindList("/EngineeringDesignEntry", null, null, [
+        
+            // Helper function to fetch data for a given entity and set it to the correct view model path
+            const fetchData = async (entityPath, viewModelPath, defaultRow) => {
+                console.log(`Fetching data for ${sCategory} (${entityPath}) with Salesdocument: ${sSalesDoc}, ItemNumber: ${sItemNum}`);
+                const oListBinding = oSimModel.bindList(entityPath, null, null, [
                     new sap.ui.model.Filter("Salesdocument", "EQ", sSalesDoc),
                     new sap.ui.model.Filter("ItemNumber", "EQ", sItemNum)
                 ]);
-
                 try {
                     const oContextList = await oListBinding.requestContexts();
-                    const aResults = oContextList.map(ctx => ctx.getObject());
-
-                    oViewModel.setProperty("/simulationData", aResults);
+                    const aResults = oContextList.map(ctx => {
+                        const obj = ctx.getObject();
+                        console.log(`Fetched row for ${entityPath}:`, obj);
+                        // Map backend field names to view model field names
+                        if (entityPath === "/MaterialEntry") {
+                            return {
+                                Description: obj.Description || "",
+                                Vendor_Details: obj.VendorDetails || obj.Vendor_Details || "",
+                                Quotation_Date: obj.QuotationDate || obj.Quotation_Date || "",
+                                Quotation_Price: obj.QuotationPrice || obj.Quotation_Price || "",
+                                Payment_Terms: obj.PaymentTerms || obj.Payment_Terms || "",
+                                Freight_Clearance_Charges_Percentage: obj.FreightClearanceChargesPercentage || obj.Freight_Clearance_Charges_Percentage || "",
+                                Freight_Clearance_Charges: obj.FreightClearanceCharges || obj.Freight_Clearance_Charges || "",
+                                Transportation_Charges: obj.TransportationCharges || obj.Transportation_Charges || "",
+                                SABER: obj.Saber || obj.SABER || "",
+                                Total_Sub_Charges: obj.TotalSubCharges || obj.Total_Sub_Charges || "",
+                                Total_Price: obj.TotalPrice || obj.Total_Price || "",
+                                __isNew: false
+                            };
+                        } else if (entityPath === "/CablesEntry") {
+                            return {
+                                Description: obj.Description || "",
+                                Circuit: obj.Circuit || "",
+                                Runs: obj.Runs || "",
+                                No_of_ph: obj.NoOfPh || obj.No_of_ph || "",
+                                Approximate_Meter: obj.ApproximateMeter || obj.Approximate_Meter || "",
+                                Total: obj.Total || "",
+                                Unit_Price: obj.UnitPrice || obj.Unit_Price || "",
+                                Total_Price: obj.TotalPrice || obj.Total_Price || "",
+                                __isNew: false
+                            };
+                        } else if (entityPath === "/IndirectCostEntry") {
+                            return {
+                                Description: obj.Description || "",
+                                Unit: obj.Unit || "",
+                                Qty: obj.Qty || "",
+                                Cost: obj.Cost || "",
+                                Labour: obj.Labour || "",
+                                Total: obj.Total || "",
+                                __isNew: false
+                            };
+                        } else {
+                            return { ...obj, __isNew: false }; // For EAndD
+                        }
+                    });
+                    oViewModel.setProperty(viewModelPath, aResults.length ? aResults : [defaultRow]);
+                    console.log(`Set ${viewModelPath} for ${sCategory}:`, oViewModel.getProperty(viewModelPath));
+                    oViewModel.refresh(true); // Ensure UI updates
                 } catch (e) {
-                    console.error("Failed to fetch saved EAndD data:", e);
-                    sap.m.MessageBox.error("Simulation saved, but could not load saved data.");
+                    console.error(`Failed to fetch saved data for ${sCategory} (${entityPath}):`, e);
+                    sap.m.MessageBox.error(`Could not load saved data for ${sCategory}: ${e.message}`);
+                    oViewModel.setProperty(viewModelPath, [defaultRow]);
+                    oViewModel.refresh(true);
                 }
+            };
+        
+            // Fetch data or set default row for each category
+            if (sCategory === "EAndD") {
+                await fetchData("/EngineeringDesignEntry", "/simulationData", {
+                    description: "", Salary: "", Months: "", NoOfPersons: "", Amount: "", __isNew: true
+                });
+            } else if (sCategory === "IndirectCost") {
+                await fetchData("/IndirectCostEntry", "/indirectCostData", {
+                    Description: "", Unit: "", Qty: "", Cost: "", Labour: "", Total: "", __isNew: true
+                });
+            } else if (sCategory === "Material") {
+                await fetchData("/MaterialEntry", "/materialData", {
+                    Description: "", Vendor_Details: "", Quotation_Date: "", Quotation_Price: "",
+                    Payment_Terms: "", Freight_Clearance_Charges_Percentage: "", Freight_Clearance_Charges: "",
+                    Transportation_Charges: "", SABER: "", Total_Sub_Charges: "", Total_Price: "", __isNew: true
+                });
+            } else if (sCategory === "Cables") {
+                await fetchData("/CablesEntry", "/cablesData", {
+                    Description: "", Circuit: "", Runs: "", No_of_ph: "", Approximate_Meter: "",
+                    Total: "", Unit_Price: "", Total_Price: "", __isNew: true
+                });
+            } else {
+                console.warn(`Unsupported category: ${sCategory}`);
+                sap.m.MessageBox.warning("Category not supported.");
+                oViewModel.setProperty("/simulationData", []);
             }
-
+        
             this._oSimulationDialog.open();
         },
-
+       
         _createMaterialRow: function (sId, oContext) {
             return new sap.m.ColumnListItem({
                 cells: [
@@ -1705,73 +2274,130 @@ sap.ui.define([
             this.getView().getModel("viewModel").setProperty("/totalAmount", totalAmount);
         },
 
-        onAddNewLine() {
-            const sCategory = this.getView().getModel("viewModel").getProperty("/selectedCategory");
-            if (sCategory === "EAndD") {
-                const aData = this.getView().getModel("viewModel").getProperty("/simulationData");
-                aData.push({
-                    description: "",
-                    Salary: "",
-                    Months: "",
-                    NoOfPersons: "",
-                    Amount: "",
-                    __isNew: true // ✅ Flag new rows
-                });
-                this.getView().getModel("viewModel").setProperty("/simulationData", aData);
-            } else if (sCategory === "IndirectCost") {
-                const aData = this.getView().getModel("viewModel").getProperty("/indirectCostData");
-                aData.push({
-                    Description: "",
-                    Unit: "",
-                    Qty: "",
-                    Cost: "",
-                    Labour: "",
-                    Total: ""
-                });
-                this.getView().getModel("viewModel").setProperty("/indirectCostData", aData);
+        // onAddNewLine() {
+        //     const sCategory = this.getView().getModel("viewModel").getProperty("/selectedCategory");
+        //     if (sCategory === "EAndD") {
+        //         const aData = this.getView().getModel("viewModel").getProperty("/simulationData");
+        //         aData.push({
+        //             description: "",
+        //             Salary: "",
+        //             Months: "",
+        //             NoOfPersons: "",
+        //             Amount: "",
+        //             __isNew: true // ✅ Flag new rows
+        //         });
+        //         this.getView().getModel("viewModel").setProperty("/simulationData", aData);
+        //     } else if (sCategory === "IndirectCost") {
+        //         const aData = this.getView().getModel("viewModel").getProperty("/indirectCostData");
+        //         aData.push({
+        //             Description: "",
+        //             Unit: "",
+        //             Qty: "",
+        //             Cost: "",
+        //             Labour: "",
+        //             Total: "",
+        //             __isNew: true
+        //         });
+        //         this.getView().getModel("viewModel").setProperty("/indirectCostData", aData);
 
 
 
-            } else if (sCategory === "Material") {
-                const oViewModel = this.getView().getModel("viewModel");
-                //oViewModel.setProperty("/selectedMaterialDesc","");
+        //     } else if (sCategory === "Material") {
+        //         const oViewModel = this.getView().getModel("viewModel");
+        //         //oViewModel.setProperty("/selectedMaterialDesc","");
 
-                let aData = oViewModel.getProperty("/materialData") || [];
-                // Create a new object with all properties
-                const newRow = {
-                    //selectedMaterialDesc:"",
-                    Description: "",
-                    Vendor_Details: "",
-                    Quotation_Date: "",
-                    Quotation_Price: "",
-                    Payment_Terms: "",
-                    Transportation_Charges: "",
-                    SABER: "",
-                    Total_Sub_Charges: "",
-                    Total_Price: ""
-                };
+        //         let aData = oViewModel.getProperty("/materialData") || [];
+        //         // Create a new object with all properties
+        //         const newRow = {
+        //             //selectedMaterialDesc:"",
+        //             Description: "",
+        //             Vendor_Details: "",
+        //             Quotation_Date: "",
+        //             Quotation_Price: "",
+        //             Payment_Terms: "",
+        //             Transportation_Charges: "",
+        //             Freight_Clearance_Charges: "", 
+        //             SABER: "",
+        //             Total_Sub_Charges: "",
+        //             Total_Price: "",
+        //             __isNew: true
+        //         };
+        //         aData.push(newRow);
+        //         oViewModel.setProperty("/materialData", [...aData]); // Spread to create a new array
+        //         console.log("materialData after add:", JSON.parse(JSON.stringify(oViewModel.getProperty("/materialData"))));
+
+
+
+        //     } else if (sCategory === "Cables") {
+        //         const aData = this.getView().getModel("viewModel").getProperty("/cablesData");
+        //         aData.push({
+        //             Description: "",
+        //             Circuit: "",
+        //             Runs: "",
+        //             No_of_ph: "",
+        //             Approximate_Meter: "",
+        //             Total: "",
+        //             Unit_Price: "",
+        //             Total_Price: "",
+        //             __isNew: true
+        //         });
+        //         this.getView().getModel("viewModel").setProperty("/cablesData", aData);
+        //     }
+        // },
+        // Save at Entities Successfully
+        
+        //UI Change
+        onAddNewLine: function () {
+            const oViewModel = this.getView().getModel("viewModel");
+            const sCategory = oViewModel.getProperty("/selectedCategory");
+            let viewModelPath, newRow;
+        
+            switch (sCategory) {
+                case "EAndD":
+                    viewModelPath = "/simulationData";
+                    newRow = {
+                        description: "", Salary: "", Months: "", NoOfPersons: "", Amount: "", __isNew: true
+                    };
+                    break;
+                case "IndirectCost":
+                    viewModelPath = "/indirectCostData";
+                    newRow = {
+                        Description: "", Unit: "", Qty: "", Cost: "", Labour: "", Total: "", __isNew: true
+                    };
+                    break;
+                case "Material":
+                    viewModelPath = "/materialData";
+                    newRow = {
+                        Description: "", Vendor_Details: "", Quotation_Date: "", Quotation_Price: "",
+                        Payment_Terms: "", Freight_Clearance_Charges_Percentage: "", Freight_Clearance_Charges: "",
+                        Transportation_Charges: "", SABER: "", Total_Sub_Charges: "", Total_Price: "", __isNew: true
+                    };
+                    break;
+                case "Cables":
+                    viewModelPath = "/cablesData";
+                    newRow = {
+                        Description: "", Circuit: "", Runs: "", No_of_ph: "", Approximate_Meter: "",
+                        Total: "", Unit_Price: "", Total_Price: "", __isNew: true
+                    };
+                    break;
+                default:
+                    sap.m.MessageBox.warning("Category not supported.");
+                    return;
+            }
+        
+            // Check if an editable row already exists
+            const aData = oViewModel.getProperty(viewModelPath);
+            const hasNewRow = aData.some(row => row.__isNew);
+            if (!hasNewRow) {
                 aData.push(newRow);
-                oViewModel.setProperty("/materialData", [...aData]); // Spread to create a new array
-                console.log("materialData after add:", JSON.parse(JSON.stringify(oViewModel.getProperty("/materialData"))));
-
-
-
-            } else if (sCategory === "Cables") {
-                const aData = this.getView().getModel("viewModel").getProperty("/cablesData");
-                aData.push({
-                    Description: "",
-                    Circuit: "",
-                    Runs: "",
-                    No_of_ph: "",
-                    Approximate_Meter: "",
-                    Total: "",
-                    Unit_Price: "",
-                    Total_Price: ""
-                });
-                this.getView().getModel("viewModel").setProperty("/cablesData", aData);
+                oViewModel.setProperty(viewModelPath, aData);
+                oViewModel.refresh(true);
+                console.log(`Added new row to ${viewModelPath}:`, newRow);
+            } else {
+                sap.m.MessageToast.show("An editable row already exists.");
             }
         },
-        // Save at Entities Successfully
+        
         onSaveSimulation: async function () {
             const oView = this.getView();
             const oViewModel = oView.getModel("viewModel");
@@ -1797,6 +2423,7 @@ sap.ui.define([
                             ShortText: oSelectedService.ShortText,
                             Salesdocument: sSalesDoc,
                             ItemNumber: sItemNum,
+                            description:row.description,
                             Salary: row.Salary,
                             Months: row.Months,
                             NoOfPersons: row.NoOfPersons,
@@ -1807,7 +2434,8 @@ sap.ui.define([
                     break;
 
                 case "IndirectCost":
-                    aDataToSave = oViewModel.getProperty("/indirectCostData").map(row => {
+                    aDataToSave = oViewModel.getProperty("/indirectCostData") .filter(row => row.__isNew) 
+                    .map(row => {
                         totalAmount += parseFloat(row.Total) || 0;
                         return {
                             ShortText: oSelectedService.ShortText,
@@ -1826,7 +2454,8 @@ sap.ui.define([
                     break;
 
                 case "Material":
-                    aDataToSave = oViewModel.getProperty("/materialData").map(row => {
+                    aDataToSave = oViewModel.getProperty("/materialData") .filter(row => row.__isNew) 
+                    .map(row => {
                         totalAmount += parseFloat(row.Total_Price) || 0;
                         return {
                             ShortText: oSelectedService.ShortText,
@@ -1837,7 +2466,7 @@ sap.ui.define([
                             QuotationDate: row.Quotation_Date,
                             QuotationPrice: row.Quotation_Price,
                             PaymentTerms: row.Payment_Terms,
-                            FreightClearanceCharges: row.Frieght_Clearance_Charges,
+                            FreightClearanceCharges: row.Freight_Clearance_Charges,
                             TransportationCharges: row.Transportation_Charges,
                             Saber: row.SABER,
                             TotalSubCharges: row.Total_Sub_Charges,
@@ -1849,7 +2478,8 @@ sap.ui.define([
                     break;
 
                 case "Cables":
-                    aDataToSave = oViewModel.getProperty("/cablesData").map(row => {
+                    aDataToSave = oViewModel.getProperty("/cablesData") .filter(row => row.__isNew) 
+                    .map(row => {
                         totalAmount += parseFloat(row.Total_Price) || 0;
                         return {
                             ShortText: oSelectedService.ShortText,
@@ -2548,10 +3178,6 @@ sap.ui.define([
         //       sap.m.MessageBox.error("Save failed: " + e.message);
         //     }
         //   },
-
-
-
-
         updateServiceLinesTable() {
             var sQuotation = this.getView().getModel("viewModel").getProperty("/quotationNumber");
             var sItemNumber = this.getView().getModel("viewModel").getProperty("/itemNumber");

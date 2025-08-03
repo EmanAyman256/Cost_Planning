@@ -7,6 +7,7 @@ entity EngineeringDesignEntry {
 
       Salesdocument : String(20);
       ItemNumber    : String(10);
+      description:String(30);
       Salary        : Decimal(13, 2);
       Months        : Integer;
       NoOfPersons   : Integer;
@@ -34,7 +35,6 @@ entity IndirectCostEntry {
 entity MaterialEntry {
   key ID                      : UUID;
       ShortText               : String(100); // 👈 Add this line
-
       Salesdocument           : String(20);
       ItemNumber              : String(10);
       Description             : String(100);
