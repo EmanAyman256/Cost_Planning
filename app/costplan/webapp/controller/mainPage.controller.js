@@ -43,6 +43,8 @@ sap.ui.define([
                 selectedCategory: null,
                 selectedService: null,
                 simulateButtonEnabled: false,
+                selectedCostingModelType: "",// start empty
+
                 simulationData: [],
                 indirectCostData: [], // New array for Indirect Cost data
                 totalAmount: "0.00"
@@ -1117,6 +1119,25 @@ sap.ui.define([
             this.getView().addDependent(oDialog);
             oDialog.open();
         },
+        // onCostingModelChange: function (oEvent) {
+        //     const sSelected = oEvent.getSource().getSelectedKey();
+        //     const oContext = oEvent.getSource().getBindingContext();
+        //     const sID = oContext.getProperty("ID");
+
+        //     this.getView().getModel().callFunction("/updateCostingModel", {
+        //         method: "POST",
+        //         urlParameters: {
+        //             ID: sID,
+        //             costingModelType: sSelected
+        //         },
+        //         success: function () {
+        //             sap.m.MessageToast.show("Updated successfully");
+        //         },
+        //         error: function () {
+        //             sap.m.MessageBox.error("Error updating record");
+        //         }
+        //     });
+        // },
 
 
         // onOpenSimulation: async function () {
@@ -1624,10 +1645,39 @@ sap.ui.define([
         onOpenSimulation: async function () {
             const oView = this.getView();
             const oViewModel = oView.getModel("viewModel");
+            const oServiceModel = oView.getModel("serviceModel");
+            const oSelectedService = oViewModel.getProperty("/selectedService");
             const oSimModel = oView.getModel("simulationModel");
             const sSalesDoc = oViewModel.getProperty("/quotationNumber");
             const sItemNum = oViewModel.getProperty("/itemNumber");
             const sCategory = oViewModel.getProperty("/selectedCategory");
+            const categoryMap = {
+                "EAndD": "E and D",
+                "Material": "Material",
+                "Cables": "Cables",
+                "IndirectCost": "Indirect Cost",
+                "Testing": "Testing",
+                "TAndCBOM": "T and C BOM"
+            };
+            const sCostingModelType = categoryMap[sCategory] || sCategory;
+
+            // Check if this item already has a costing model assigned
+            const aServices = oServiceModel.getData();
+            const existingService = aServices.find(service =>
+                service.ExtLine === oSelectedService.ExtLine &&
+                service.CostingModelType &&
+                service.CostingModelType !== sCostingModelType
+            );
+
+            if (existingService) {
+                sap.m.MessageBox.warning(
+                    `This item already has a different costing model assigned: ${existingService.CostingModelType}`
+                );
+                return; // Stop opening the simulation dialog
+            }
+
+            // ✅ Save selected costing model type to the view model (for later save)
+            oViewModel.setProperty("/selectedCostingModelType", sCostingModelType);
 
             // Validate required parameters
             if (!sSalesDoc || !sItemNum || !sCategory) {
@@ -1709,16 +1759,26 @@ sap.ui.define([
                     path: "viewModel>/indirectCostData",
                     template: new sap.m.ColumnListItem({
                         cells: [
-                            new sap.m.Input({ value: "{viewModel>Description}",    editable: "{= ${viewModel>__isNew} === true }",
-                                change: this.onIndirectCostInputChange.bind(this) }),
-                            new sap.m.Input({ value: "{viewModel>Unit}",     editable: "{= ${viewModel>__isNew} === true }",
-                                change: this.onIndirectCostInputChange.bind(this) }),
-                            new sap.m.Input({ value: "{viewModel>Qty}",     editable: "{= ${viewModel>__isNew} === true }",
-                                type: "Number", change: this.onIndirectCostInputChange.bind(this) }),
-                            new sap.m.Input({ value: "{viewModel>Cost}",     editable: "{= ${viewModel>__isNew} === true }",
-                                type: "Number", change: this.onIndirectCostInputChange.bind(this) }),
-                            new sap.m.Input({ value: "{viewModel>Labour}",    editable: "{= ${viewModel>__isNew} === true }",
-                                change: this.onIndirectCostInputChange.bind(this) }),
+                            new sap.m.Input({
+                                value: "{viewModel>Description}", editable: "{= ${viewModel>__isNew} === true }",
+                                change: this.onIndirectCostInputChange.bind(this)
+                            }),
+                            new sap.m.Input({
+                                value: "{viewModel>Unit}", editable: "{= ${viewModel>__isNew} === true }",
+                                change: this.onIndirectCostInputChange.bind(this)
+                            }),
+                            new sap.m.Input({
+                                value: "{viewModel>Qty}", editable: "{= ${viewModel>__isNew} === true }",
+                                type: "Number", change: this.onIndirectCostInputChange.bind(this)
+                            }),
+                            new sap.m.Input({
+                                value: "{viewModel>Cost}", editable: "{= ${viewModel>__isNew} === true }",
+                                type: "Number", change: this.onIndirectCostInputChange.bind(this)
+                            }),
+                            new sap.m.Input({
+                                value: "{viewModel>Labour}", editable: "{= ${viewModel>__isNew} === true }",
+                                change: this.onIndirectCostInputChange.bind(this)
+                            }),
                             new sap.m.Input({ editable: false, value: "{viewModel>Total}", type: "Number", change: this.onTotalDirectChange.bind(this) })
                         ]
                     })
@@ -1775,19 +1835,31 @@ sap.ui.define([
                     path: "viewModel>/cablesData",
                     template: new sap.m.ColumnListItem({
                         cells: [
-                            new sap.m.Input({ value: "{viewModel>Description}",     editable: "{= ${viewModel>__isNew} === true }",
-                                change: this.onCablesInputChange.bind(this) }),
-                            new sap.m.Input({ value: "{viewModel>Circuit}",    editable: "{= ${viewModel>__isNew} === true }",
-                                type: "Number", change: this.onCablesInputChange.bind(this) }),
-                            new sap.m.Input({ value: "{viewModel>Runs}",    editable: "{= ${viewModel>__isNew} === true }",
-                                type: "Number", change: this.onCablesInputChange.bind(this) }),
-                            new sap.m.Input({ value: "{viewModel>No_of_ph}",    editable: "{= ${viewModel>__isNew} === true }",
-                                type: "Number", change: this.onCablesInputChange.bind(this) }),
-                            new sap.m.Input({ value: "{viewModel>Approximate_Meter}",    editable: "{= ${viewModel>__isNew} === true }",
-                                change: this.onCablesInputChange.bind(this) }),
+                            new sap.m.Input({
+                                value: "{viewModel>Description}", editable: "{= ${viewModel>__isNew} === true }",
+                                change: this.onCablesInputChange.bind(this)
+                            }),
+                            new sap.m.Input({
+                                value: "{viewModel>Circuit}", editable: "{= ${viewModel>__isNew} === true }",
+                                type: "Number", change: this.onCablesInputChange.bind(this)
+                            }),
+                            new sap.m.Input({
+                                value: "{viewModel>Runs}", editable: "{= ${viewModel>__isNew} === true }",
+                                type: "Number", change: this.onCablesInputChange.bind(this)
+                            }),
+                            new sap.m.Input({
+                                value: "{viewModel>No_of_ph}", editable: "{= ${viewModel>__isNew} === true }",
+                                type: "Number", change: this.onCablesInputChange.bind(this)
+                            }),
+                            new sap.m.Input({
+                                value: "{viewModel>Approximate_Meter}", editable: "{= ${viewModel>__isNew} === true }",
+                                change: this.onCablesInputChange.bind(this)
+                            }),
                             new sap.m.Input({ editable: false, value: "{viewModel>Total}", type: "Number", change: this.onCablesTotalPriceChange.bind(this) }),
-                            new sap.m.Input({ value: "{viewModel>Unit_Price}",    editable: "{= ${viewModel>__isNew} === true }",
-                                type: "Number", change: this.onCablesInputChange.bind(this) }),
+                            new sap.m.Input({
+                                value: "{viewModel>Unit_Price}", editable: "{= ${viewModel>__isNew} === true }",
+                                type: "Number", change: this.onCablesInputChange.bind(this)
+                            }),
                             new sap.m.Input({ editable: false, value: "{viewModel>Total_Price}", type: "Number", change: this.onCablesTotalPriceChange.bind(this) })
                         ]
                     })
@@ -2035,10 +2107,10 @@ sap.ui.define([
                     new sap.m.Input({
                         value: "{viewModel>Total_Sub_Charges}",
                         type: "Number",
-                        
+
                         change: this.onMaterialInputChange.bind(this),
                         editable: false
-                                        }),
+                    }),
                     new sap.m.Input({
                         value: "{viewModel>Total_Price}",
                         type: "Number",
@@ -2561,6 +2633,18 @@ sap.ui.define([
                 await oSimModel.submitBatch(sBatchGroupId);
 
                 // Update GrPrice in view model and service model (frontend only for now)
+                // Map key to display text
+                const categoryMap = {
+                    "EAndD": "E and D",
+                    "Material": "Material",
+                    "Cables": "Cables",
+                    "IndirectCost": "Indirect Cost",
+                    "Testing": "Testing",
+                    "TAndCBOM": "T and C BOM"
+                };
+
+                const sCostingModelType = categoryMap[sCategory] || sCategory;
+
                 const aServices = oServiceModel.getData();
                 const iIndex = aServices.findIndex(service =>
                     service.ExtLine === oSelectedService.ExtLine &&
@@ -2568,10 +2652,12 @@ sap.ui.define([
                 );
 
                 if (iIndex !== -1) {
-                    aServices[iIndex].GrPrice = totalAmount.toFixed(2);
+                    aServices[iIndex].CostingModelType = sCostingModelType; // New column in table
+                    aServices[iIndex].GrPrice = totalAmount.toFixed(2); // Existing code
                     oServiceModel.setData(aServices);
                     oServiceModel.refresh(true);
                 }
+
 
                 sap.m.MessageToast.show("Saved successfully to CAP.");
                 this._oSimulationDialog.close();

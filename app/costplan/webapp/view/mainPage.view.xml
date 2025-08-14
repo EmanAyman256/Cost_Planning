@@ -111,6 +111,12 @@
                                 <Text id="_IDGenText2" text="{serviceModel>Service}"/>
                             </table:template>
                         </table:Column>
+                       <table:Column id="_IDGenColumn8">
+    <Label id="_IDGenLabel1" text="Costing Model Type" />
+    <table:template>
+        <Text id="_IDGenText7" text="{serviceModel>CostingModelType}" />
+    </table:template>
+</table:Column>
                         <table:Column id="_IDGenColumn4">
                             <Label id="_IDGenLabel5" text="Quantity"/>
                             <table:template>
@@ -133,6 +139,12 @@
                             <Label id="_IDGenLabel8" text="Currency"/>
                             <table:template>
                                 <Text id="_IDGenText6" text="{serviceModel>TransactionCurrency}"/>
+                            </table:template>
+                        </table:Column>
+                        <table:Column id="_IDGenColumn9">
+                            <Label id="_IDGenLabel11" text="Total Subcharge"/>
+                            <table:template>
+                                <Text id="_IDGenText8" text="{serviceModel>TransactionCurrency}"/>
                             </table:template>
                         </table:Column>
                     </table:columns>
