@@ -144,7 +144,7 @@
                         <table:Column id="_IDGenColumn9">
                             <Label id="_IDGenLabel11" text="Total Subcharge"/>
                             <table:template>
-                                <Text id="_IDGenText8" text="{serviceModel>TransactionCurrency}"/>
+                                <Text id="_IDGenText8" text="{serviceModel>TotalSubCharges}"/>
                             </table:template>
                         </table:Column>
                     </table:columns>

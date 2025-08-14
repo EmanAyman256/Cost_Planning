@@ -2122,7 +2122,7 @@ sap.ui.define([
             });
         },
 
-
+        //Worked
         onMaterialInputChange(oEvent) {
             const oInput = oEvent.getSource();
             const oContext = oInput.getBindingContext("viewModel");
@@ -2179,6 +2179,7 @@ sap.ui.define([
 
             this.updateTotalAmount();
         },
+
         // onMaterialTotalPriceChange(oEvent) {
         //     const oInput = oEvent.getSource();
         //     const oContext = oInput.getBindingContext("viewModel");
@@ -2591,8 +2592,24 @@ sap.ui.define([
                                 CreatedAt: sTimestamp
                             };
                         });
+
                     sEntityPath = "/MaterialEntry";
+
+                    // ✅ Update main table’s TotalSubCharges immediately
+                    const aServices = oServiceModel.getData();
+                    const iIndex = aServices.findIndex(s => s.ExtLine === oSelectedService.ExtLine);
+
+                    if (iIndex !== -1) {
+                        // Calculate sum from ALL rows in materialData
+                        const newTotal = oViewModel.getProperty("/materialData")
+                            .reduce((sum, r) => sum + (parseFloat(r.Total_Sub_Charges) || 0), 0);
+
+                        aServices[iIndex].TotalSubCharges = newTotal.toFixed(2);
+                        oServiceModel.setData(aServices);
+                        oServiceModel.refresh(true);
+                    }
                     break;
+
 
                 case "Cables":
                     aDataToSave = oViewModel.getProperty("/cablesData").filter(row => row.__isNew)
